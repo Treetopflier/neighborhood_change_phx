@@ -1,0 +1,229 @@
+---
+title: "Decennial Race Data"
+author: "Anthony Gallegos"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    df_print: paged
+    theme: flatly
+    highlight: haddock
+    toc: yes
+    toc_float: yes
+---
+
+```{r knitr_init, echo=FALSE, cache=FALSE, message=FALSE}
+library(knitr)
+library(readr)
+library(devtools)
+library(dplyr)
+library(pander)
+library(censusapi)
+library(maptools)
+library(rgdal)
+library(geojsonio)
+library(rmapshaper)
+library(sf)
+library(ggplot2)
+library(tidyr)
+library(viridis)
+## Global options
+options(max.print="75")
+opts_chunk$set(echo=TRUE,
+	             cache=TRUE,
+               prompt=FALSE,
+               tidy=TRUE,
+               comment=NA,
+               message=FALSE,
+               warning=FALSE)
+opts_knit$set(width=75)
+```
+
+
+# Data Pull Code for Race
+
+## 1990,2000,2010 Decennials using race as an example. 1990 has the most limiting data collected regarding race,
+## and the 2000 and 2010 data is transformed to reflect it (the totals equal to the total, suggesting the data
+## transformation does not adversely impact the integrity of the data).
+
+
+```{r}
+
+# Clear Working Environment
+rm (list = ls ())
+
+# Set Working Directory
+setwd("~/Documents/Capstone/Solo Project/Markdown")
+
+# Census Key
+censuskey <- "e2a75a26c7d4adf9db476fa739110c582113d15e"
+
+```
+
+## 1990 Data Pull
+
+```{r}
+
+# Read csv file with only race variables. I manually created this by cutting and pasting the rows I wanted from the previous spreadsheet. 
+
+`1990_race` <- read.csv("/home/anthony/Documents/Capstone/Solo Project/Variables/race/race_1990.csv")
+
+# Create Variable list based off variables in the first column
+var.list.race.1990 <- `1990_race`$name
+
+
+# Pull Data using variable list only. Make sure the censusapi package is loaded.
+race.pop.1990 <- getCensus( name = "sf3", vintage = 1990, key=censuskey,
+                               vars = var.list.race.1990,
+                               region="tract:*", regionin="state:04&county:13" )
+
+# Rename data
+race.pop.1990 <- rename(race.pop.1990, Total_1990=P0010001, White_1990=P0080001, Black_1990=P0080002, Indian_1990=P0080003, Asian_or_Pacific_Islander_1990=P0080004, Other_Race_1990=P0080005)
+
+# I will need to use the paste function to identify the year for these variables.
+
+# Write into new csv file
+write.csv( race.pop.1990, "/home/anthony/Documents/Capstone/Solo Project/Written CSVs/race_1990_pop.csv", row.names=T)
+
+
+
+
+```
+
+
+## 2000 Data Pull
+```{r}
+
+
+# Read csv file with only race variables. I manually created this by cutting and pasting the rows I wanted from the previous spreadsheet. 
+
+`2000_race` <- read.csv("/home/anthony/Documents/Capstone/Solo Project/Variables/race/race_2000.csv")
+
+# Create Variable list based off variables in the first column
+var.list.race.2000 <- `2000_race`$name
+
+
+# Pull Data using variable list only. Make sure the censusapi package is loaded.
+race.pop.2000 <- getCensus( name = "sf3", vintage = 2000, key=censuskey,
+                               vars = var.list.race.2000,
+                               region="tract:*", regionin="state:04&county:13" )
+
+# Rename data
+race.pop.2000 <- rename(race.pop.2000, Total_2000=P006001, White_2000=P006002, Black_2000=P006003, Indian_2000=P006004, Asian_2000=P006005, Pacific_Islander_2000=P006006, Other_Race_Single_2000=P006007, Other_Race_Multiple_2000=P006008 )
+
+# Group by 
+race.pop.2000.mod <- race.pop.2000 %>% group_by(tract)
+
+
+# Sum Other_Race_Single and Other_Race_Multiple and create new column
+
+race.pop.2000.mod <-race.pop.2000.mod %>% mutate( Other_Race_2000 = Other_Race_Single_2000 + Other_Race_Multiple_2000)
+
+
+# Sum Asian and Pacific_Islander and create new column
+
+race.pop.2000.mod <-race.pop.2000.mod %>% mutate( Asian_or_Pacific_Islander_2000 = Asian_2000 + Pacific_Islander_2000)
+
+
+# Remove Other_Race_Single, Other_Race_Multiple, Asian, and Pacific_Islander columns
+
+race.pop.2000.mod <- subset(race.pop.2000.mod, select = -c(Asian_2000, Pacific_Islander_2000, Other_Race_Single_2000, Other_Race_Multiple_2000 ))
+
+# I will need to use the paste function to identify the year for these variables.
+
+# Write into new csv file
+write.csv( race.pop.2000.mod, "/home/anthony/Documents/Capstone/Solo Project/Written CSVs/race_2000_pop.csv", row.names=T)
+
+
+
+```
+
+## 2010 Data Pull
+```{r}
+
+# Read csv file with only race variables. I manually created this by cutting and pasting the rows I wanted from the previous spreadsheet. 
+
+`2010_race` <- read.csv("/home/anthony/Documents/Capstone/Solo Project/Variables/race/race_2010.csv")
+
+# Create Variable list based off variables in the first column
+var.list.race.2010 <- `2010_race`$name
+
+
+# Pull Data using variable list only. Make sure the censusapi package is loaded.
+race.pop.2010 <- getCensus( name = "dec/sf1", vintage = 2010, key=censuskey,
+                               vars = var.list.race.2010,
+                               region="tract:*", regionin="state:04&county:013" )
+
+
+# Rename data
+race.pop.2010 <- rename(race.pop.2010, Total_2010=P003001, White_2010=P003002, Black_2010=P003003, Indian_2010=P003004, Asian_2010=P003005, Pacific_Islander_2010=P003006, Other_Race_Other_2010=P003007, Other_Race_Multiple_2010=P003008 )
+
+# Group by 
+race.pop.2010.mod <- race.pop.2010 %>% group_by(tract)
+
+# Sum Other_Race_Single and Other_Race_Multiple and create new column
+
+race.pop.2010.mod <-race.pop.2010.mod %>% mutate( Other_Race_2010 = Other_Race_Other_2010 + Other_Race_Multiple_2010)
+
+# Sum Asian and Pacific_Islander and create new column
+
+race.pop.2010.mod <-race.pop.2010.mod %>% mutate( Asian_or_Pacific_Islander_2010 = Asian_2010 + Pacific_Islander_2010)
+
+
+# Remove Other_Race_Single, Other_Race_Multiple, Asian, and Pacific_Islander columns
+
+race.pop.2010.mod <- subset(race.pop.2010.mod, select = -c(Asian_2010, Pacific_Islander_2010, Other_Race_Other_2010, Other_Race_Multiple_2010  ))
+
+# I will need to use the paste function to identify the year for these variables.
+
+# Write into new csv file
+write.csv( race.pop.2010.mod, "/home/anthony/Documents/Capstone/Solo Project/Written CSVs/race_2010_pop.csv", row.names=T)
+
+
+
+```
+
+## Import Shapefile and Join to Data
+
+```{r}
+# The commands below work, but this is only for the 2010 data. Need to take new dataset that is combined for all 3 decennials
+# instead of joining with the 2010 data.
+
+county_shp <- "/home/anthony/Documents/Capstone/Solo Project/Shape Files/tl_2010_04013_tract10.shp"
+
+# Read shape file and create and create variable for it
+county_st <- st_read(county_shp)
+
+# Join shapefile with race by tract
+mcpa <- left_join(county_st, race.pop.2010.mod, by=c("TRACTCE10"="tract"))
+
+
+# This is not writing correctly-- the last column is getting split
+# write.csv( mcpa, "/home/anthony/Documents/Capstone/Solo Project/Merged Data/race_2010_sh.csv")
+
+
+
+
+
+```
+
+
+
+
+
+## Percentages (Not complete)
+
+```{r}
+
+# Add Percentages (probably makes more sense to do this after combining everything)
+
+# race.pop <- race.pop %>% group_by(tract) %>% mutate(( White_Percent = White / Total) * 100) %>%
+# mutate(( Black_Percent = Black / Total) * 100) %>% 
+# mutate(( Indian_Percent = American_Indian_Eskimo_or_Aleu / Total) * 100) %>%
+# mutate(( Asian_Percent = Asian_or_Pacific_Islander / Total) * 100) %>%
+# mutate(( Other_Percent = Other_Race / Total) * 100)
+
+
+
+
+```
+

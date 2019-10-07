@@ -1,0 +1,124 @@
+
+
+1990  SF3
+
+P0070001	SEX[2] Male	Population Subjects
+P0070002	SEX[2] Female	Population Subjects
+
+
+HU100      Housing Unit Count (100%)  Geographic Traits
+H061A001   Median value               Housing Subjects
+
+
+P0570001	EDUCATION[7] Less than 9th grade	Population Subjects
+P0570002	EDUCATION[7] 9th to 12th grade, no diplo	Population Subjects
+P0570003	EDUCATION[7] High school graduate	Population Subjects
+P0570004	EDUCATION[7] Some college, no degree	Population Subjects
+P0570005	EDUCATION[7] Associate degree	Population Subjects
+P0570006	EDUCATION[7] Bachelor's degree	Population Subjects
+P0570007	EDUCATION[7] Graduate or professional degree	Population Subjects
+
+P080A001	MEDIAN INC 89[1] Median household income	Population Subjects
+
+
+
+
+
+
+2000  SF3
+
+
+P008002	Total: Male:	P8. Sex by Age [79]
+P008041	Total: Female:	P8. Sex by Age [79]
+
+
+H003001	Total Housing units	H3. 100-Percent Count of Housing Units [1]
+H085001	Median value Owner-occupied housing units	H85. Median Value (Dollars) for All Owner-occupied Housing Units [1]
+
+
+HCT020001	Median real estate taxes Specified owner-occupied housing units	HCT20. Median Real Estate Taxes (Dollars) [1]
+
+
+
+P148A003	Total: Male: Less than 9th grade	P148A. Sex by Educational Attainment for the Population 25 Years and Over (White Alone) [17]
+P148A004	Total: Male: 9th to 12th grade, no diploma	P148A. Sex by Educational Attainment for the Population 25 Years and Over (White Alone) [17]
+P148A005	Total: Male: High school graduate (includes equivalency)	P148A. Sex by Educational Attainment for the Population 25 Years and Over (White Alone) [17]
+P148A006	Total: Male: Some college, no degree	P148A. Sex by Educational Attainment for the Population 25 Years and Over (White Alone) [17]
+P148A007	Total: Male: Associate degree	P148A. Sex by Educational Attainment for the Population 25 Years and Over (White Alone) [17]
+P148A008	Total: Male: Bachelor's degree	P148A. Sex by Educational Attainment for the Population 25 Years and Over (White Alone) [17]
+P148A009	Total: Male: Graduate or professional degree	P148A. Sex by Educational Attainment for the Population 25 Years and Over (White Alone) [17]
+
+P148A011	Total: Female: Less than 9th grade	P148A. Sex by Educational Attainment for the Population 25 Years and Over (White Alone) [17]
+P148A012	Total: Female: 9th to 12th grade, no diploma	P148A. Sex by Educational Attainment for the Population 25 Years and Over (White Alone) [17]
+P148A013	Total: Female: High school graduate (includes equivalency)	P148A. Sex by Educational Attainment for the Population 25 Years and Over (White Alone) [17]
+P148A014	Total: Female: Some college, no degree	P148A. Sex by Educational Attainment for the Population 25 Years and Over (White Alone) [17]
+P148A015	Total: Female: Associate degree	P148A. Sex by Educational Attainment for the Population 25 Years and Over (White Alone) [17]
+P148A016	Total: Female: Bachelor's degree	P148A. Sex by Educational Attainment for the Population 25 Years and Over (White Alone) [17]
+P148A017	Total: Female: Graduate or professional degree	P148A. Sex by Educational Attainment for the Population 25 Years and Over (White Alone) [17]
+
+
+
+P053001	Median household income in 1999 Households	P53. Median Household Income in 1999 (Dollars) [1]
+
+
+2010 SF1
+
+P012002	Total!!Male	SEX BY AGE
+P012026	Total!!Female	SEX BY AGE
+
+
+2010 ACS
+
+B01001_002E	Estimate!!Total!!Male	SEX BY AGE
+B01001_026E	Estimate!!Total!!Female	SEX BY AGE
+
+
+
+B25001_001E	Estimate!!Total	HOUSING UNITS
+B25077_001E	Estimate!!Median value (dollars)	MEDIAN VALUE (DOLLARS)
+B25103_001E	Estimate!!Median real estate taxes paid!!Total	MORTGAGE STATUS BY MEDIAN REAL ESTATE TAXES PAID (DOLLARS)
+
+
+
+B19013_001E	Estimate!!Median household income in the past 12 months (in 2010 inflation-adjusted dollars)	MEDIAN HOUSEHOLD INCOME IN THE PAST 12 MONTHS (IN 2010 INFLATION-ADJUSTED DOLLARS)
+
+
+B15002_003E	Estimate!!Total!!Male!!No schooling completed
+B15002_004E	Estimate!!Total!!Male!!Nursery to 4th grade
+B15002_005E	Estimate!!Total!!Male!!5th and 6th grade
+B15002_006E	Estimate!!Total!!Male!!7th and 8th grade
+B15002_007E	Estimate!!Total!!Male!!9th grade
+B15002_008E	Estimate!!Total!!Male!!10th grade
+B15002_009E	Estimate!!Total!!Male!!11th grade
+B15002_010E	Estimate!!Total!!Male!!12th grade, no diploma
+B15002_011E	Estimate!!Total!!Male!!High school graduate, GED, or alternative
+B15002_012E	Estimate!!Total!!Male!!Some college, less than 1 year
+B15002_013E	Estimate!!Total!!Male!!Some college, 1 or more years, no degree
+B15002_014E	Estimate!!Total!!Male!!Associate's degree
+B15002_015E	Estimate!!Total!!Male!!Bachelor's degree
+B15002_016E	Estimate!!Total!!Male!!Master's degree
+B15002_017E	Estimate!!Total!!Male!!Professional school degree
+B15002_018E	Estimate!!Total!!Male!!Doctorate degree
+
+B15002_020E	Estimate!!Total!!Female!!No schooling completed
+B15002_021E	Estimate!!Total!!Female!!Nursery to 4th grade
+B15002_022E	Estimate!!Total!!Female!!5th and 6th grade
+B15002_023E	Estimate!!Total!!Female!!7th and 8th grade
+B15002_024E	Estimate!!Total!!Female!!9th grade
+B15002_025E	Estimate!!Total!!Female!!10th grade
+B15002_026E	Estimate!!Total!!Female!!11th grade
+B15002_027E	Estimate!!Total!!Female!!12th grade, no diploma
+B15002_028E	Estimate!!Total!!Female!!High school graduate, GED, or alternative
+B15002_029E	Estimate!!Total!!Female!!Some college, less than 1 year
+B15002_030E	Estimate!!Total!!Female!!Some college, 1 or more years, no degree
+B15002_031E	Estimate!!Total!!Female!!Associate's degree
+B15002_032E	Estimate!!Total!!Female!!Bachelor's degree
+B15002_033E	Estimate!!Total!!Female!!Master's degree
+B15002_034E	Estimate!!Total!!Female!!Professional school degree
+B15002_035E	Estimate!!Total!!Female!!Doctorate degree
+
+
+
+B07010_001E	Estimate!!Total
+B07010_002E	Estimate!!Total!!No income
+B07010_003E	Estimate!!Total!!With income

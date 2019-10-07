@@ -1,0 +1,175 @@
+---
+title: "Education Level"
+author: "Anthony Gallegos"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    df_print: paged
+    theme: flatly
+    highlight: haddock
+    toc: yes
+    toc_float: yes
+---
+
+```{r knitr_init, echo=FALSE, cache=FALSE, message=FALSE}
+library(knitr)
+library(dplyr)
+library(pander)
+library(devtools)
+library(censusapi)
+library(maptools)
+library(rgdal)
+library(geojsonio)
+library(rmapshaper)
+library(sf)
+library(ggplot2)
+library(tidyr)
+library(viridis)
+## Global options
+options(max.print="75")
+opts_chunk$set(echo=TRUE,
+	             cache=TRUE,
+               prompt=FALSE,
+               tidy=TRUE,
+               comment=NA,
+               message=FALSE,
+               warning=FALSE)
+opts_knit$set(width=75)
+```
+
+
+# Data Pull Code for Education Level
+
+This is going to have to be done at the lowest common denometer. In this case, the 1990 data is the least robust.
+
+I'm going to need to do the following to collapse the data into like categories.
+
+2000 Data. Same categories, but I will need to pull both male and female versions and combine them. Simple Enough.
+
+2010 Data. Even more robust categories. I'm going to need to collapse the variables even more and then combine male/female.
+
+
+
+
+## This is not using the 2010 sf1 data, as it is not included. Instead, the acs/ac5 data will be used.
+
+```{r}
+
+# Set Working Directory
+setwd("~/Documents/Capstone/Solo Project/Markdown")
+
+# Census Key
+censuskey <- "e2a75a26c7d4adf9db476fa739110c582113d15e"
+
+```
+
+## 1990 Education Level Data Pull
+```{r}
+
+# Var Pull
+
+`1990_edu_lvl` <- read.csv("/home/anthony/Documents/Capstone/Solo Project/Variables/edu_lvl/edu_1990.csv")
+
+# Create Variable list based off variables in the first column
+var.edu.1990 <- `1990_edu_lvl`$name
+
+
+# Pull Data using variable list only. Make sure the censusapi package is loaded.
+edu.1990 <- getCensus( name = "sf3", vintage = 1990, key=censuskey,
+                               vars = var.edu.1990,
+                               region="tract:*", regionin="state:04&county:013" )
+
+
+
+# Rename data
+edu.lvl.1990 <- rename( edu.1990, Less_9th_1990=P0570001, More_9th_1990=P0570002, High_Sch_Grad_1990=P0570003, Some_College_1990=P0570004, Assc_Deg_1990=P0570005, Bachelors_Deg_1990=P0570006, Grad_Deg_1990=P0570007 )
+```
+
+
+## 2000 Education Level Data Pull
+```{r}
+
+# Var Pull
+
+`2000_edu_lvl` <- read.csv("/home/anthony/Documents/Capstone/Solo Project/Variables/edu_lvl/edu_2000.csv")
+
+# Create Variable list based off variables in the first column
+var.edu.2000 <- `2000_edu_lvl`$name
+
+
+# Pull Data using variable list only. Make sure the censusapi package is loaded.
+edu.2000 <- getCensus( name = "sf3", vintage = 2000, key=censuskey,
+                               vars = var.edu.2000,
+                               region="tract:*", regionin="state:04&county:013" )
+
+
+# New var combining male and female
+
+edu.2000$Less_9th_2000 <- (edu.2000$P148A003 + edu.2000$P148A011 )
+
+edu.2000$More_9th_2000 <- (edu.2000$P148A004 + edu.2000$P148A012  )
+
+edu.2000$High_Sch_Grad_2000 <- (edu.2000$P148A005 + edu.2000$P148A013)
+
+edu.2000$Some_College_2000 <- (edu.2000$P148A006 + edu.2000$P148A014)
+
+edu.2000$Assc_Deg_2000 <- (edu.2000$P148A007 + edu.2000$P148A015 )
+
+edu.2000$Bachelors_Deg_2000 <- (edu.2000$P148A008 + edu.2000$P148A016)
+
+edu.2000$Grad_Deg_2000 <- (edu.2000$P148A008 + edu.2000$P148A017 )
+
+
+```
+
+
+## 2010 ACS Data Pull
+```{r}
+
+# It may be necessary to pull the 2010 ACS because the 2010 decennial sf1 data is not nearly as comprehensive.
+
+`2010_edu_lvl` <- read.csv("/home/anthony/Documents/Capstone/Solo Project/Variables/edu_lvl/edu_2010.csv")
+
+# Create Variable list based off variables in the first column
+var.edu.2010 <- `2010_edu_lvl`$name
+ 
+
+# Pull Data using variable list only. Make sure the censusapi package is loaded.
+edu.2010acs <- getCensus( name = "acs/acs5", vintage = 2010, key=censuskey,
+                               vars = var.edu.2010,
+                               region="tract:*", regionin="state:04&county:013" )
+
+
+
+# New var combining male and female
+
+edu.2010acs$Less_9th_2010 <- (edu.2010acs$B15002_003E + edu.2010acs$B15002_004E + edu.2010acs$B15002_005E + edu.2010acs$B15002_006E +  edu.2010acs$B15002_020E + edu.2010acs$B15002_021E + edu.2010acs$B15002_022E + edu.2010acs$B15002_023E   )
+
+edu.2010acs$More_9th_2010 <- (edu.2010acs$B15002_007E + edu.2010acs$B15002_008E + edu.2010acs$B15002_009E + edu.2010acs$B15002_010E + edu.2010acs$B15002_025E + edu.2010acs$B15002_025E + edu.2010acs$B15002_026E + edu.2010acs$B15002_027E + edu.2010acs$B15002_024E )
+
+edu.2010acs$High_Sch_Grad_2010 <- (edu.2010acs$B15002_011E + edu.2010acs$B15002_028E )
+
+edu.2010acs$Some_College_2010 <- (edu.2010acs$B15002_012E + edu.2010acs$B15002_013E + edu.2010acs$B15002_029E + edu.2010acs$B15002_030E)
+
+edu.2010acs$Assc_Deg_2010 <- (edu.2010acs$B15002_014E + edu.2010acs$B15002_031E )
+
+edu.2010acs$Bachelors_Deg_2010 <- (edu.2010acs$B15002_015E + edu.2010acs$B15002_032E )
+
+edu.2010acs$Grad_Deg_2010 <- (edu.2010acs$B15002_016E + edu.2010acs$B15002_017E + edu.2010acs$B15002_018E + edu.2010acs$B15002_033E + edu.2010acs$B15002_034E + edu.2010acs$B15002_035E)
+
+
+
+
+
+
+
+
+
+
+
+```
+
+
+
+
+

@@ -1,0 +1,257 @@
+---
+title: "Crosswalk"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(readr)
+library(data.table)
+```
+
+<!-- #Convenience -->
+<!-- rm(list = ls ()) -->
+
+
+# Change Types
+
+## No Change
+
+The 2010 population for both the Census 2000 tract and the 2010 Census tract is 5,017 and the total area is 827,553,078 m^2 .
+
+```{r}
+
+# POP00 & POP10 are the same   --Same population
+# AREA00 & AREA10 are the same -- Same area/boundary
+# HUPCT00 & HUPCT10 are the same -- Should both read 100.00
+
+# There should be no P or W   (Partially vs. Wholly [within] )
+
+# if geoid00 and geoid10 have the same values and rows, and poppct00 and poppct10 are 100.0, there is no change.
+
+# Load Crosswalk Data
+source("relationship_data_import.R")
+
+# Extract Only No Change from Dataset
+
+xwalk.nochange.0010 <- Import.0010.mcpa[Import.0010.mcpa$GEOID00 == Import.0010.mcpa$GEOID10,]
+# 428 values
+
+
+# Remove No Change Data from Dataset
+
+xwalk.nochange.rem.0010 <- Import.0010.mcpa[Import.0010.mcpa$GEOID00 != Import.0010.mcpa$GEOID10,]
+# 665 values
+
+#Validation Code
+# nochange.valid10 <- (xwalk.nochange.0010[duplicated(xwalk.nochange.0010$GEOID10),])
+# #0 
+
+
+# write.csv(xwalk.nochange.rem.0010, "/home/anthony/Documents/Capstone/Solo Project/Crosswalk/no_change_rem_0010.csv", row.names = T )
+
+```
+
+
+## Merge
+
+In the example below, Census 2000 tracts 000100 and 000200 merged together to form 2010 Census tract 000600. The 2010 population for Census 2000 tract 000100 is 857 and the population for tract 000200 is 751. The 2010 population for the 2010 Census tract 000600 is 1,608.
+
+In addition, the total area for 2000 Census tract 000100 is 8,956,127,151 m and the total area for 2000 Census tract 000200 is 2,928,158,060 m . The total area for the 2010 Census tract 000600 is 11,884,327,258 m .
+
+Record 1 shows that Census 2000 tract 000100 falls wholly within 2010 Census tract 000600, since there is a W in the PART00 field. Record 2 shows that Census 2000 tract 000200 does not fall wholly within 2010 Census tract 000600, since there is a P in the PART00 field for this record. This is because a small sliver of Census 2000 tract 000200 crosses into another 2010 Census tract in a different county (shown in the red box on the map). Record 3 in the example below refers to the small sliver that was formed due to a small boundary correction that has occurred over the past decade. Record 3 shows that there is no population living within the small sliver since the POP10PT is 0.
+
+Therefore, if you wanted to compare the population change between 2000 and 2010, you would compare the 2000 population of Census 2000 tracts 000100 and 000200 to the 2010 population of 2010 Census tract 000600.
+
+
+```{r}
+
+# GEOID00 & GEOID10 -- 
+# TRACT00 & TRACT10 -- 
+# POP00 & POP10     -- 
+# AREA00 & AREA10   -- Change in area is required.
+# PART00 & PART10   -- 
+
+# tract00 == W & tract10 == P, with poppct00 == 100% and poppct10 rows totaling == 100%
+
+# Note- part10 should read P across all rows
+
+#  if poppct00 has a value of 100% for all records and poppct10 tallys across all records and equal 100% , it is a merge.
+
+
+
+# Extract Only No Change from Dataset
+
+xwalk.merge.0010 <- xwalk.nochange.rem.0010[xwalk.nochange.rem.0010$PART10 == "P",]
+# 266 obs
+
+
+# Remove Merge Data from Dataset
+# Note- this file has both merge removed, and no changes removed
+xwalk.merge.rem.0010 <- xwalk.nochange.rem.0010[xwalk.nochange.rem.0010$PART10 != "P",]
+# 399 obs
+
+
+# Note- When I run this against the original data, it appears that the no change script I wrote is overlapping... may need help on this one.
+# xwalk.merge.test <- Import.0010.mcpa[Import.0010.mcpa$PART10 == "P",]
+# 313 obs (compared to 266)
+
+
+# write.csv(xwalk.merge.rem.0010, "/home/anthony/Documents/Capstone/Solo Project/Crosswalk/merge_rem_0010.csv", row.names = T )
+
+```
+
+
+
+
+## Split
+
+n the example below, Census 2000 tract 001903 was divided into two 2010 Census tracts: 001907 and 001908. The 2010 population for Census 2000 tract 001903 is 5,775. The 2010 population for 2010 Census tract 001907 is 2,775 and for 2010 Census tract 001908 is 3,000.
+
+In addition, the total area of Census 2000 tract 001903 is 127,067,755 m . The total area of 2010 Census tract 001907 is 50,049,249 m and for 2010 Census tract 001908 is 77,018,506 m . Both 2010 Census tracts 001907 and 001908 fall wholly within Census 2000 tract 001903, so there is a W in both PART10 fields.
+
+However, since Census 2000 tract 001903 is divided into the two 2010 Census tracts, there is a P in
+the PART00 field for both records.
+
+If you wanted to compare the population change between 2000 and 2010, you would need the 2000
+population for Census 2000 tract 001903 and compare it to the 2010 population for both 2010 Census tracts 001907 and 001908.
+
+
+
+```{r}
+
+# TRACT00 & TRACT10 -- 
+# POP00 & POP10     -- 
+# AREA00 & AREA10   -- Change in area is required.
+# PART00 & PART10
+
+
+# if tract10 has more records than tract00, and all rows from tract00 have part00 == P tract10 have part10 == W, it is a split.
+
+
+# Note- part10 should read W across all rows
+
+ # if poppct00 tallys across all records and equal 100% and poppct10 has a value of 100% for all records, it is a split
+
+
+# Extract Only Split from Dataset
+
+xwalk.split.0010 <- xwalk.merge.rem.0010[xwalk.merge.rem.0010$PART00 == "P",] 
+# 342 obs
+xwalk.split.0010 <- xwalk.split.0010[xwalk.split.0010$POPPCT10 == 100.0,]
+# 341 obs
+                                        
+
+
+# Remove Split Data from Dataset
+# Note- this file has merge removed, no changes removed, and split removed
+
+xwalk.split.rem.0010 <- xwalk.merge.rem.0010[xwalk.merge.rem.0010$PART00 != "P",] 
+xwalk.split.rem.0010 <- xwalk.split.rem.0010[xwalk.split.rem.0010$POPPCT10 != 100.0,]
+# 0 obs
+            
+# This can't be correct
+
+
+
+
+# write.csv(xwalk.split.rem.0010, "/home/anthony/Documents/Capstone/Solo Project/Crosswalk/split_rem_0010.csv", row.names = T )
+
+```
+
+
+## Revision
+
+Small revisions each decade are allowed, but should not affect a large portion of the population.
+The 2010 population for the Census 2000 tract 963800 is 4,461 while the 2010 population for the 2010 Census tract 963800 is 4,501.
+
+In addition, the total area for the Census 2000 tract 963800 is 793,173,214 m while the total area for the 2010 Census tract 963800 is 845,726,965 m . The Census 2000 tract 963800 is wholly within the 2010 Census tract
+963800, so there is a W in the PART00 field.
+
+However, the 2010 Census tract 963800 is not wholly within the Census 2000 tract 963800, so
+there is a P in the PART10 field for that record (Record 1). Since the new 2010 Census tract 963800 has been revised, it now crosses into another Census 2000 tract: 963600, therefore there is an additional polygon and record (Record 2). The 2010 population count for this polygon is 40 and only represents 0.89% of the population living within 2010 Census tract 963800. So, the revision did not affect a large
+portion of the population.
+
+```{r}
+
+# POP00 & POP10     -- Does the difference cause a large change? If so, not a revision.
+# POPPCT10          -- This should show the change. I can probably not test POP00 & POP10 and just use this.
+# AREA00 & AREA10   -- Change in area is required.
+
+
+# There should be no P or W   (Partially vs. Wholly [within] )
+
+# if area00 & area10 are different, with part10 == P, and tract00 and tract10 have a 1 to many relationship, it is a revision .
+
+
+
+# Note: Revision should not need anything, as the only csv/datafile saved from the previous section, xwalk.split.rem.0010  ,  has No Changes, Splits, and Merges removed,
+# meaning that all remaining rows should be revisions.
+
+```
+
+
+<!-- The code below can be archived for now  -->
+
+<!-- # Data Mismatch Comparison 2000 / 2010 -->
+
+```{r}
+
+# Significant Changes > 2.5% Comparison
+# sig.1990 <- read.csv( "/home/anthony/Documents/Capstone/Solo Project/Relationship Files/1990/Sig_Change_1990.csv", header=F )
+# sig.2000 <- read.csv( "/home/anthony/Documents/Capstone/Solo Project/Relationship Files/2000/Sig_Change_2000.csv", header=F )
+# The two files above should not be used for this purpose. The 2000 file is based off natl population data, and the 1990 file is based off the 2000 population. In short, these should just be ignored.
+
+# Comparison needs to compare 2000 to 2010 in that order.
+
+# 
+# # GeoID Comparison 2000 / 2010
+# df.geodiff <- data.frame( Import.0010.mcpa$PART00, Import.0010.mcpa$PART10, Import.0010.mcpa$GEOID00, Import.0010.mcpa$GEOID10)
+# 
+# # TractID Comparison 2000 / 2010
+# df.tractdiff <- data.frame( Import.0010.mcpa$PART00, Import.0010.mcpa$PART10, Import.0010.mcpa$TRACT00, Import.0010.mcpa$TRACT10)
+# 
+# # Combination 2000 / 2010
+# df1 <- as.data.frame(paste0(setdiff(Import.0010.mcpa$TRACT00, Import.0010.mcpa$TRACT10)))
+# df2 <- as.data.frame(paste0(setdiff(Import.0010.mcpa$GEOID00, Import.0010.mcpa$GEOID10)))
+# df3 <- data.frame(df1, df2 )
+# write.csv(df3, "/home/anthony/Documents/Capstone/Solo Project/Raw Data/tract_geo_diff.csv")
+
+```
+
+
+<!-- # Data Mismatch Comparison 1990/ 2000 -->
+
+```{r}
+
+# Need to make 2 GeoID variables for this...
+
+# Significant Changes > 2.5% Comparison
+# sig.1990 <- read.csv( "/home/anthony/Documents/Capstone/Solo Project/Relationship Files/1990/Sig_Change_1990.csv", header=F )
+# sig.2000 <- read.csv( "/home/anthony/Documents/Capstone/Solo Project/Relationship Files/2000/Sig_Change_2000.csv", header=F )
+# The two files above should not be used for this purpose. The 2000 file is based off natl population data, and the 1990 file is based off the 2000 population. In short, these should just be ignored.
+
+
+
+
+# GeoID Comparison 1990 / 2000
+
+# df4 <- as.data.frame (setdiff(Import.9020.mcpa$tract.fips, Import.9020.mcpa$tract.fips20))
+
+
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,157 @@
+---
+title: "Relationship_Files"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = F)
+library(readr)
+
+```
+
+
+# Convenience
+
+```{r}
+
+rm (list = ls ())
+
+```
+
+
+# 1990 Significant Changes > 2.5% Relationship File
+
+```{r}
+# Note-- This file is no longer available on the census website after their change.
+# Substantially changed 2000 Census Tract Files
+
+# Headers: None
+
+sig.1990 <- read.csv( "/home/anthony/Documents/Capstone/Solo Project/Relationship Files/1990/Sig_Change_1990.csv", header=F )
+
+head(sig.1990)
+
+```
+
+# 2000 Significant Changes > 2.5% Relationship File
+
+```{r}
+# Substantially changed 2000 Census Tract Files
+
+# Headers: None
+
+sig.2000 <- read.csv( "/home/anthony/Documents/Capstone/Solo Project/Relationship Files/2000/Sig_Change_2000.csv", header=F )
+
+head(sig.2000)
+
+```
+
+# 1990/2000 ASCII Pop Relationship File 
+
+```{r}
+
+df.9020.full <- read.csv( "https://www2.census.gov/geo/relfiles/tract/az/az04pop.txt", header=F )
+
+ascii.text <- df.9020.full$V1
+state.fips  <- substr( ascii.text, 1, 2 )
+county.fips <- substr( ascii.text, 3, 5 )
+tract.fips <- substr( ascii.text, 6, 11 )
+part.flag <- substr( ascii.text, 12, 12 )
+
+part.flag20 <- substr( ascii.text, 37, 37 )
+state.fips20  <- substr( ascii.text, 26, 27 )
+county.fips20 <- substr( ascii.text, 28, 30 )
+tract.fips20 <- substr( ascii.text, 31, 36 )
+
+geoid <- paste0( state.fips, county.fips, tract.fips, state.fips20, county.fips20, tract.fips20 )
+
+pct.1990 <- as.numeric( substr( ascii.text, 22, 25 ) ) / 10 
+pct.2000 <- as.numeric( substr( ascii.text, 47, 50 ) ) / 10 
+
+df.9020.full <- data.frame( geoid, tract.fips, tract.fips20, part.flag, part.flag20, pct.1990, pct.2000, state.fips, state.fips20, county.fips, county.fips20 )
+
+# Keeping only Maricopa County
+
+df.9020.mcpa <- subset( df.9020.full, county.fips == "013" )
+# head(df.9020.mcpa)
+
+write.csv( df.9020.mcpa, "/home/anthony/Documents/Capstone/Solo Project/Raw Data/1990_2000_relationship_mcpa.csv", row.names=T)
+
+
+
+
+# Clean Read of local copy 
+df.9020.mcpa <- read.csv("/home/anthony/Documents/Capstone/Solo Project/Raw Data/1990_2000_relationship_mcpa.csv", header=T)
+
+
+```
+
+# 2000 Substantial Changes Relationship File
+
+```{r}
+# Substantially changed 2000 Census Tract Files
+
+# Headers: STATE00,COUNTY00,TRACT00,GEOID00
+
+df.2000.subch <- read.csv( "https://www2.census.gov/geo/docs/maps-data/data/rel/sig00_txt/az04sig00.txt", header=F )
+colnames(df.2000.subch) <- c("STATE00", "COUNTY00", "TRACT00", "GEOID00" )
+head(df.2000.subch)
+
+write.csv( df.2000.subch, "/home/anthony/Documents/Capstone/Solo Project/Raw Data/2000_subchanges.csv", row.names=T)
+
+
+# Clean Read of local copy 
+df.2000.subch <- read.csv("/home/anthony/Documents/Capstone/Solo Project/Raw Data/2000_subchanges.csv", header=T )
+
+```
+
+# 2010 Substantial Changes Relationship File
+
+```{r}
+# Substantially changed 2000 Census Tract Files
+
+# Headers: STATE00,COUNTY00,TRACT00,GEOID00
+
+df.2010.subch <- read.csv( "https://www2.census.gov/geo/docs/maps-data/data/rel/sig10_txt/az04sig10.txt", header=T)
+colnames(df.2010.subch) <- c("STATE10", "COUNTY10", "TRACT10", "GEOID10" )
+head(df.2000.subch)
+
+write.csv( df.2010.subch, "/home/anthony/Documents/Capstone/Solo Project/Raw Data/2010_subchanges.csv") 
+
+
+# Clean Read of local copy 
+df.2010.subch <- read.csv("/home/anthony/Documents/Capstone/Solo Project/Raw Data/2010_subchanges.csv", header=T)
+
+```
+
+# 2000/2010 Census Tract Relationship File
+
+```{r}
+# Substantially changed 2010 Census Tract Files
+
+# Headers: STATE00,COUNTY00,TRACT00,GEOID00,POP00,HU00,PART00,AREA00,AREALAND00,STATE10,COUNTY10,TRACT10,GEOID10,POP10,HU10,PART10,AREA10,AREALAND10,AREAPT,AREALANDPT,AREAPCT00PT,ARELANDPCT00PT,AREAPCT10PT,AREALANDPCT10PT,POP10PT,POPPCT00,POPPCT10,HU10PT,HUPCT00,HUPCT10
+
+df.0010.full <- read.csv( "https://www2.census.gov/geo/docs/maps-data/data/rel/trf_txt/az04trf.txt", header=F )
+
+colnames(df.0010.full) <- c( "STATE00", "COUNTY00", "TRACT00", "GEOID00", "POP00", "HU00","PART00", "AREA00", "AREALAND00","STATE10", "COUNTY10", "TRACT10", "GEOID10", "POP10", "HU10", "PART10", "AREA10", "AREALAND10", "AREAPT", "AREALANDPT", "AREAPCT00PT", "ARELANDPCT00PT", "AREAPCT10PT", "AREALANDPCT10PT", "POP10PT", "POPPCT00", "POPPCT10", "HU10PT", "HUPCT00", "HUPCT10" )
+
+head(df.0010.full)
+write.csv( df.0010.full, "/home/anthony/Documents/Capstone/Solo Project/Raw Data/20_10_relationship.csv")
+
+
+# Keeping only Maricopa County
+
+df.0010.mcpa <- subset( df.0010.full, COUNTY00 == 13)
+head(df.0010.mcpa)
+
+write.csv( df.0010.mcpa, "/home/anthony/Documents/Capstone/Solo Project/Raw Data/00_10_relationship_mcpa.csv", row.names = T)
+
+
+# Clean Read of local copy 
+df.0010.mcpa <- read.csv("/home/anthony/Documents/Capstone/Solo Project/Raw Data/00_10_relationship_mcpa.csv", header = T)
+
+
+```
+
+
+

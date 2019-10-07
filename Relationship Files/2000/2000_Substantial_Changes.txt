@@ -1,0 +1,7 @@
+Downloaded from the link below on Friday, April 19th 2019.
+https://www2.census.gov/geo/docs/maps-data/data/rel/sig00header.txt
+
+
+2000 Substantially Changed Census Tracts Files
+
+STATE00,COUNTY00,TRACT00,GEOID00

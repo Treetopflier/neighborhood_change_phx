@@ -1,0 +1,8 @@
+name,label,concept
+P0570001,EDUCATION[7] Less than 9th grade,Population Subjects
+P0570002,"EDUCATION[7] 9th to 12th grade, no diplo",Population Subjects
+P0570003,EDUCATION[7] High school graduate,Population Subjects
+P0570004,"EDUCATION[7] Some college, no degree",Population Subjects
+P0570005,EDUCATION[7] Associate degree,Population Subjects
+P0570006,EDUCATION[7] Bachelor's degree,Population Subjects
+P0570007,EDUCATION[7] Graduate or professional degree,Population Subjects

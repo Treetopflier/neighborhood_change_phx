@@ -1,0 +1,9 @@
+name,label,concept
+P003001,Total,RACE
+P003002,Total!!White alone,RACE
+P003003,Total!!Black or African American alone,RACE
+P003004,Total!!American Indian and Alaska Native alone,RACE
+P003005,Total!!Asian alone,RACE
+P003006,Total!!Native Hawaiian and Other Pacific Islander alone,RACE
+P003007,Total!!Some Other Race alone,RACE
+P003008,Total!!Two or More Races,RACE

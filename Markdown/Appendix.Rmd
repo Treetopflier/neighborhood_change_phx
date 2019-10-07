@@ -1,0 +1,63 @@
+---
+title: "Appendix"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(readr)
+```
+
+
+
+# Cleaned Relationship Data Import
+
+```{r}
+# This will autoload all cleaned relationship data. 
+
+source("relationship_data_import.R")
+
+```
+
+# Crosswalk Functions 
+
+```{r}
+# This will autoload all required functions for the crosswalk
+
+source("Crosswalk_Functions.R")
+
+```
+
+# Merged Race Data Import
+
+```{r}
+# This will autoload all merged race data. 
+
+# create source file
+
+```
+
+# Merged Education Data Import
+
+```{r}
+# This will autoload all merged education data. 
+
+# create source file
+
+```
+
+# Merged Income Data Import
+
+```{r}
+# This will autoload all merged income data. 
+
+# create source file
+
+```
+
+# Merged Housing Data Import
+
+```{r}
+# This will autoload all merged housing data.  
+
+# create source file

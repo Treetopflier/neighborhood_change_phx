@@ -1,0 +1,22 @@
+---
+title: "Gaz - Fun"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+# Fun  -   2010 Gazetteer Data
+
+```{r}
+
+# Census Tract List
+gaz.2010.tract <- read.csv( "https://www2.census.gov/geo/docs/maps-data/data/gazetteer/census_tracts_list_04.txt", header=T )
+
+# County List
+gaz.2010.county <- read.csv( "https://www2.census.gov/geo/docs/maps-data/data/gazetteer/counties_list_04.txt", header=T )
+
+
+```

@@ -1,0 +1,77 @@
+---
+title: "follow_lecy_example"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library( dplyr )
+library( geojsonio )
+library( sp )
+```
+
+## R Markdown
+
+<!-- Okay, so I shouldn't use my merged data for this for dat since that's what I'm comparing to the shapefile here. -->
+<!-- Let's re-do this with a proper 2010 geojson and compare appropriate. -->
+
+```{r }
+
+# url <- "https://raw.githubusercontent.com/lecy/neighborhood_change_phx/master/shapefiles/county.geojson"
+# phx <- geojson_read( url, method = "local", what="sp" )
+# dat <- read.csv( "/home/anthony/Documents/Capstone/Solo Project/Merged Data/race_2010_sh.csv", stringsAsFactors=F, colClasses="character"  )
+
+county_shp <- "/home/anthony/Documents/Capstone/Solo Project/Shape Files/tl_2010_04013_tract10.shp"
+
+# Read shape file and create and create variable for it
+county_st <- st_read(county_shp)
+
+# Write shape file to geojson file
+geojsonio::geojson_write(county_st, file = "/home/anthony/Documents/Capstone/Solo Project/Shape Files/county_st.geojson")
+
+
+
+```
+
+
+```{r}
+
+dat <- read.csv("/home/anthony/Documents/Capstone/Solo Project/Written CSVs/race_2010_pop.csv", stringsAsFactors=F, colClasses="character")
+
+phx <- geojson_read("/home/anthony/Documents/Capstone/Solo Project/Shape Files/county_st.geojson", method = "local", what = "sp" )
+
+geoid <- paste0( dat$state, dat$county, dat$tract )
+  
+
+# Line 47 of code does not work
+crosswalk <- (as.data.frame(phx@data[c("STATEFP00", "COUNTYFP00", "TRACTCE00" )]))
+
+crosswalk <- (as.data.frame(phx[c(phx@data$STATEFP00, phx@data$COUNTYFP00, phx@data$TRACTCE00 )]))
+
+# Dr. Lecy's orig
+geoid <- paste0( dat$state, dat$county, dat$tract )
+crosswalk <- phx@data[c("STATEFP00", "COUNTYFP00", "TRACTCE00" )]
+crosswalk <- phx[c(phx@data$STATEFP00, phx@data$COUNTYFP00, phx@data$TRACTCE00 )]
+
+crosswalk$X <- "X"
+crosswalk$X <- is.na(crosswalk$X)
+crosswalk$TRACT4 <- substr( crosswalk$TRACTCE00, 1, 4 )
+crosswalk$TRACT2 <- substr( crosswalk$TRACTCE00, 5, 6 )
+crosswalk$GEOID_1990 <- crosswalk$TRACTCE00
+crosswalk$GEOID_1990[ is.na(phx@data$X) ] <- NA
+crosswalk <- crosswalk[c("STATEFP00", "COUNTYFP00", "TRACT4", "TRACT2", "X", 
+"TRACTCE00","GEOID_1990")]
+names(crosswalk) <- c("STATEFP00", "COUNTYFP00", "TRACT4", "TRACT2", "MISSING", "TRACTCE00", "GEOID_1990")
+crosswalk <- arrange( crosswalk, TRACT4, TRACT2 )
+
+# write.csv( crosswalk, "/home/anthony/Documents/Capstone/Solo Project/Written CSVs/Tract-Crosswalk-1990-to-2010.csv", row.names=F )
+
+# I'll need to change my dat file to something with geoid in it to make this work.
+these <- setdiff( dat$geoid, phx$CTIDFP00  )
+void.1990 <- data.frame( GEOID=these, TRACT4=substr(these,6,9), TRACT2=substr(these,10,11) )
+  
+
+
+
+```
+

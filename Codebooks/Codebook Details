@@ -1,0 +1,47 @@
+
+The 1990 & 2010 SF1/SF3, and 2010 SF1 codebooks were downloaded from https://api.census.gov/data.html on April 13th, between 5-7pm, using Google Chrome for the 1990, 2000, & 2010 data. The 2010 ACS codebook was downloaded on April 14th at 5:29pm.
+
+The Titles and associated variable links are listed below.
+
+1990 Decennial Census of Population and Housing - Summary File 1: Summary File 1
+https://api.census.gov/data/1990/sf1/variables.html
+
+1990 Decennial Census of Population and Housing - Summary File 3: Summary File 3
+https://api.census.gov/data/1990/sf3/variables.html
+
+2000 Decennial: Summary File 1
+https://api.census.gov/data/2000/sf1/variables.html
+
+
+2000 Decennial: Summary File 3
+https://api.census.gov/data/2000/sf3/variables.html
+
+[2010] Decennial SF1
+https://api.census.gov/data/2010/dec/sf1/variables.html
+
+
+ACS 5-Year Detailed Tables
+https://api.census.gov/data/2010/acs/acs5/variables.html
+
+
+
+
+
+
+**Note- The ACS 2015 data is not being used because the source data is corrupted
+ACS 5-Year Detailed Tables
+https://api.census.gov/data/2015/acs/acs5/variables.html
+
+
+Specifically, the 'variable' hyperlink was accessed which redirected us to a new website containing the variable names in a single, large table.
+
+The "Select All" feature was used, the information copied to the computer clipboard, and subsequently pasted into LibreOffice Calc version 6.0.7.3 and saved as a .csv file.
+The Row totals were then compared to ensure data integrity.
+
+This process was repeated for each of the files listed above.
+
+
+**
+The 2015 ACS data is corrupted in the GEOID field, with tens of thousands rows of data appearing in one cell.
+I cannot import this, or separate it. I can try this in excel later, but...
+As this data is not integral to the overall project, and relies on imputed numbers from 2010 based on forecasts, I am omitting this dataset.
