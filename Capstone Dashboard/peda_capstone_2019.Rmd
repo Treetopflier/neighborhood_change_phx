@@ -4,7 +4,7 @@ output:
    flexdashboard::flex_dashboard:
     theme: spacelab
     social: menu
-    source_code: embed  
+    source_code: embed    
     smart: false
 runtime: shiny
 ---
@@ -87,7 +87,7 @@ The 1990, 2000, and select 2010 data is pulled from NHGIS time-series tables ava
 
 
 
-This dashboard identifies four demographic changes to consider:
+This dashboard identifies five demographic changes to consider:
 
 * Total Phoenix Population from 1990-2015
 
@@ -111,7 +111,10 @@ This dashboard identifies four demographic changes to consider:
 
 * Income from 2010-2015
 
-  + Income was selected because of the impact it has on individuals livelihood. Specifically, this dashboard looks at the disparity between those living below the poverty line and those in the highest income bracket. As the dot plots show, the delineation between highest and lowest income brackets is not based on geography, but they appear to be comingled throughout Phoenix. As the choropleth maps showing the percentage of individuals living under the poverty line indicate, there was an increase in individuals living under the poverty line between 2010 and 2015. Finally, a donut plot shows the split of income brackets in 2015, focusing on below the poverty line, the highest income bracket, and those living in between.
+  + Income was selected because of the impact it has on individuals livelihood. Specifically, this dashboard looks at the disparity between those living below the poverty line and those in the highest income bracket. As the dot plots show, the delineation between highest and lowest income brackets is not based on geography, but they appear to be comingled throughout Phoenix. As the choropleth maps showing the percentage of individuals living under the poverty line indicate, there was an increase in individuals living under the poverty line between 2010 and 2015. A donut plot shows the split of income brackets in 2015, focusing on below the poverty line, the highest income bracket, and those living in between. Finally, a dorlan cartogram shows the change in income for the county.
+  
+* Unemployment in 2010
+  + Unemployment was selected because of the impact it has on the community at large. Specifically, this dashboard looks at dorlan cartograms to identify the unemployment disparity in Maricopa county.
 
 
 Total{data-orientation=columns}
