@@ -4,14 +4,13 @@ output:
    flexdashboard::flex_dashboard:
     theme: spacelab
     social: menu
-    source_code: embed
+    source_code: embed  
     smart: false
 runtime: shiny
 ---
 
 ```{r setup, chunk-1, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
-
 library(flexdashboard, quietly=TRUE)
 library(knitr, quietly=TRUE)
 library(dplyr, quietly=TRUE)
@@ -36,31 +35,25 @@ library(readr,quietly=TRUE)
 library(purrr, quietly=TRUE)
 library(shiny, quietly=TRUE)
 library(mapproj, quietly=TRUE )
-
+library(tmap)
 rsconnect::setAccountInfo(name='capstone-2019',
 			  token='42374D46DF80838E3A170E7C68111248',
 			  secret='AAU1ZrEg3iR/ZN78he/XUoCaIXryCFdRrlMxXUD5')
-
 ```
 
 ```{r, chunk-2, include=FALSE}
 # Import Shapefile
-
 download.file( "https://github.com/lecy/neighborhood_change_phx/raw/master/shapefiles/tl_2010_04013_tract10.zip", 
 "maricopa-az-census_tract10.zip" )
 unzip( "maricopa-az-census_tract10.zip" )
 file.remove( "maricopa-az-census_tract10.zip" )
 dir()
-
 phx <- readOGR("tl_2010_04013_tract10.shp")
 head( phx@data, 10)
 plot( phx )
-
 phx <- spTransform( phx, CRS("+proj=longlat +datum=WGS84") )
-
 phx$geoid2 <- paste0( "G", phx$STATEFP10, 
                      "0", phx$COUNTYFP10, "0", phx$TRACTCE10 )
-
 ```
 
 Narrative {data-orientation=columns}
@@ -79,7 +72,6 @@ plot(phx)
 
 ```{r}
 plot(phx, xlim=c(-112.5, -111.5), ylim=c(33.2, 33.75) )
-
 ```
 
 Column {data-width=600}
@@ -126,7 +118,6 @@ Total{data-orientation=columns}
 =====================================   
 
 ```{r global}
-
 # URL <- "https://raw.githubusercontent.com/lecy/neighborhood_change_phx/master/data/total.dat.csv"
 # total.dat <- read.csv( URL, stringsAsFactors=FALSE )
 H <- c(983403,1321045,1445632,1563025)
@@ -159,7 +150,6 @@ Outputs
 setColor <- reactive({
   bar.color <- ifelse( M == input$clusterNum, "steelblue", "darksalmon" )
 })
-
 renderPlot({
   
   selected.color <- setColor()
@@ -185,8 +175,6 @@ selectedData <- reactive({
   # FOR TESTING:
   # total.dat <- total.dat[ total.dat$year == 1990 , ]
   })
-
-
 renderPlot({
   
  dat.for.plot <- selectedData()
@@ -205,27 +193,20 @@ renderPlot({
 Race {data-orientation=rows}
 =====================================     
 ```{r, include=FALSE}
-
 download.file( "https://github.com/lecy/neighborhood_change_phx/raw/master/shapefiles/tl_2010_04013_tract10.zip", 
 "maricopa-az-census_tract10.zip" )
 unzip( "maricopa-az-census_tract10.zip" )
 file.remove( "maricopa-az-census_tract10.zip" )
 dir()
-
 phx <- readOGR("tl_2010_04013_tract10.shp")
 phx <- spTransform( phx, CRS("+proj=longlat +datum=WGS84") )
 phx$geoid2 <- paste0( "G", phx$STATEFP10, 
                      "0", phx$COUNTYFP10, 
                      "0", phx$TRACTCE10 )
-
 dat.url <- "https://raw.githubusercontent.com/lecy/neighborhood_change_phx/master/data/race.dashboard.dat.2.csv"
-
 race.dat <- read.csv( dat.url, stringsAsFactors=F )
-
 race.shape.data <- merge(phx, race.dat, by.x="geoid2", by.y="GISJOIN", all.x=T)
-
 phx_fortified <- tidy( phx, region = "geoid2")
-
 race.fortified <- merge( phx_fortified, race.dat, by.x="id", by.y="GISJOIN", all.x=T)
 ```
 
@@ -235,26 +216,17 @@ Row {.tabset .tabset-fade}
 
 ### Dot Map Race 1990
 ```{r, include=FALSE}
-
 #Data
-
 URL <- "https://raw.githubusercontent.com/lecy/neighborhood_change_phx/master/data/race.dashboard.dat.2.csv"
-
 race.dashboard <- read.csv( URL, stringsAsFactors=FALSE )
 # Join
 phx2 <- geo_join( phx, race.dashboard, by_sp="geoid2", by_df="GISJOIN", how="left" )
 # Maps
-
 White_1990 <- dotsInPolys( phx2 , race.dashboard$White_1990/100, f = "random", offset, compatible = FALSE)
-
 Black_1990 <- dotsInPolys( phx2 , race.dashboard$Black_1990/100, f = "random", offset, compatible = FALSE)
-
 NativeAmAlaskan_1990 <- dotsInPolys( phx2 , race.dashboard$NativeAmAlaskan_1990/100, f = "random", offset, compatible = FALSE)
-
 Asian_1990 <- dotsInPolys( phx2 , race.dashboard$Asian_1990/100, f = "random", offset, compatible = FALSE)
-
 NHPI_1990 <- dotsInPolys( phx2 , race.dashboard$NHPI_1990/45, f = "random", offset, compatible = FALSE)
-
 SomeOther_1990 <- dotsInPolys( phx2 , race.dashboard$SomeOther_1990/100, f = "random", offset, compatible = FALSE)
 ```
 ```{r}
@@ -274,22 +246,15 @@ legend( "bottomleft", legend= c("White", "Black", "Native American", "Asian", "P
 ### Dot Map Race 2015
 ```{r, include=FALSE}
 White_2015 <- dotsInPolys( phx2 , race.dashboard$White_2015/100, f = "random", offset, compatible = FALSE)
-
 Black_2015 <- dotsInPolys( phx2 , race.dashboard$Black_2015/100, f = "random", offset, compatible = FALSE)
-
 AmericanIndian_2015 <- dotsInPolys( phx2 , race.dashboard$AmericaIndian_2015/100, f = "random", offset, compatible = FALSE)
-
 Asian_2015 <- dotsInPolys( phx2 , race.dashboard$Asian_2015/100, f = "random", offset, compatible = FALSE)
-
 PacificIslander_2015 <- dotsInPolys( phx2 , race.dashboard$PacificIslander_2015/100, f = "random", offset, compatible = FALSE)
-
 OtherRace_2015 <- dotsInPolys( phx2 , race.dashboard$OtherRace_2015/100, f = "random", offset, compatible = FALSE)
-
 TwoPlusRaces_2015 <- dotsInPolys( phx2 , race.dashboard$TwoPlusRaces_2015/100, f = "random", offset, compatible = FALSE)
 ```
 ```{r}
 par( mar=c(0,0,0,0) )
-
 plot( phx2, border="black", 
       xlim=c(-112.5, -111.5), ylim=c(32.75, 33.75) )
 points( White_2015, col=adjustcolor("firebrick", alpha.f=0.2), pch=19, cex=0.7 )
@@ -358,7 +323,6 @@ legend( "right", legend= c("Some Other Race 1990", "Some Other Race 2015"), fill
 ### Two or more
 
 ```{r}
-
 hist(race.dashboard$TwoPlusRaces_2015,col="mediumblue", xpd=FALSE, xlab="Two+ Races Population Counts",main="Histogram for\n Two or more races Popluation in 2015", breaks=40, ylim=range(0:80))
 legend( "right", legend="Two Plus Races", fill="mediumblue",  box.lty=2, box.col="black")
 ```
@@ -375,25 +339,16 @@ download.file( "https://github.com/lecy/neighborhood_change_phx/raw/master/shape
 unzip( "maricopa-az-census_tract10.zip" )
 file.remove( "maricopa-az-census_tract10.zip" )
 dir()
-
 phx <- readOGR("tl_2010_04013_tract10.shp")
 phx <- spTransform( phx, CRS("+proj=longlat +datum=WGS84") )
-
 phx$geoid2 <- paste0( "G", phx$STATEFP10, 
                      "0", phx$COUNTYFP10, 
                      "0", phx$TRACTCE10 )
-
 dat.url <- "https://raw.githubusercontent.com/lecy/neighborhood_change_phx/master/data/ethnicity.dashboard.dat.2.csv"
-
 ethnicity.dat <- read.csv( dat.url, stringsAsFactors=F )
-
 ethnicity.shape.data <- merge(phx, ethnicity.dat, by.x="geoid2", by.y="GISJOIN", all.x=T)
-
 phx_fortified <- tidy( phx, region = "geoid2")
-
 ethnicity.fortified <- merge( phx_fortified, ethnicity.dat, by.x="id", by.y="GISJOIN", all.x=T)
-
-
 ```
  
 Row {.tabset .tabset-fade}
@@ -455,19 +410,15 @@ download.file( "https://github.com/lecy/neighborhood_change_phx/raw/master/shape
 unzip( "maricopa-az-census_tract10.zip" )
 file.remove( "maricopa-az-census_tract10.zip" )
 dir()
-
 library( rgdal )
 phx <- readOGR("tl_2010_04013_tract10.shp")
 phx <- spTransform( phx, CRS("+proj=longlat +datum=WGS84") )
-
 phx$geoid2 <- paste0( "G", phx$STATEFP10, 
                      "0", phx$COUNTYFP10,
                      "0", phx$TRACTCE10 )
 URL <- "https://raw.githubusercontent.com/lecy/neighborhood_change_phx/master/data/vacancy.dashboard.dat.2.csv"
-
 vacancy.dashboard <- read.csv( URL, stringsAsFactors=FALSE )
 # Join
-
 phx2 <- geo_join( phx, vacancy.dashboard, by_sp="geoid2", by_df="GISJOIN", how="left" )
 ```
  
@@ -481,11 +432,9 @@ VacantForSale_2000 <- dotsInPolys( phx2 , vacancy.dashboard$VacantForSale_2000/1
 ```
 ```{r}
 par( mar=c(0,0,0,0) )
-
 plot( phx2, border="black", 
       xlim=c(-112.5, -111.5), ylim=c(33.25, 33.75)  )
 points( VacantForSale_2000, col=adjustcolor("firebrick4", alpha.f=0.2), pch=19, cex=0.7 )
-
 legend( "bottomleft", legend= "Houses for Sale", fill="firebrick4", box.lty=2, box.col="black", bg="white" )
 ```
 
@@ -496,10 +445,8 @@ VacantForSale_2010 <- dotsInPolys( phx2 , vacancy.dashboard$VacantForSale_2010/1
 ```
 ```{r}
 par( mar=c(0,0,0,0) )
-
 plot( phx2, border="black", 
       xlim=c(-112.5, -111.5), ylim=c(33.25, 33.75)  )
-
 points( VacantForSale_2010, col=adjustcolor("goldenrod2", alpha.f=0.2), pch=19, cex=0.7 )
 legend( "bottomleft", legend= "Houses for Sale", fill="goldenrod2", box.lty=2, box.col="black", bg="white" )
 ```
@@ -512,42 +459,35 @@ Row {data-height=600}
 
 ```{r, figure.align="center", out.width="100%"}
 options(width=150)
-
 #Data 2000
-
 pct2 <- c(1.13, 98.9)
-
 shades2 <- c("goldenrod2", "firebrick4")
-
 categories2 <- c("1.13%", "98.9%")
-
 pie(pct2, labels = categories2, col = shades2)
-
 symbols(0, 0, circles = 1, add=TRUE, bg="white")
-
 legend("center", c("Houses for Sale", "Houses Not for Sale"), fill=c("goldenrod2", "firebrick4"), box.lty=0, bg=NULL)
-
 ```
 
 ### Percent Houses for Sale 2010
 
 ```{r, figure.align="center", out.width="100%"}
 # Data 2010
-
 pct3 <- c(2.38, 97.6)
-
 shades3 <- c("firebrick", "goldenrod2")
-
 categories3 <- c("2.38%", "97.6%")
-
 pie(pct3, labels = categories3, col = shades3)
-
 symbols(0, 0, circles = 1, add=TRUE, bg="white")
-
 legend("center", c("Houses for Sale", "Houses Not for Sale"), fill=c("firebrick4", "goldenrod2"), box.lty=0, bg=NULL)
-
 ```
 
+### % Houses for Sale 2000 and 2010
+
+```{r, figure.align="center", figure.height = 10, figure.width=10}
+hist(vacancy.dashboard$VacantForSale_2000,col=rgb(250,128,114, alpha=100, maxColorValue = 250), 
+xlab="Houses for Sale",main="Histograms for\n Houses for Sale in 2000 and 2010", breaks=50)
+hist(vacancy.dashboard$VacantForSale_2010, col=rgb(255,127,80, alpha=50, maxColorValue = 255), add=TRUE, breaks=50)
+legend( "right", legend= c("Houses 2000", "Houses 2010"), fill=c("lightsalmon", rgb(255,127,80, alpha=50, maxColorValue = 255)),  box.lty=2, box.col="black")
+```
 
 Income {data-orientation=rows}
 =====================================     
@@ -558,23 +498,16 @@ download.file( "https://github.com/lecy/neighborhood_change_phx/raw/master/shape
 unzip( "maricopa-az-census_tract10.zip" )
 file.remove( "maricopa-az-census_tract10.zip" )
 dir()
-
 phx <- readOGR("tl_2010_04013_tract10.shp")
 phx <- spTransform( phx, CRS("+proj=longlat +datum=WGS84") )
-
 phx$geoid2 <- paste0( "G", phx$STATEFP10, 
                      "0", phx$COUNTYFP10,
                      "0", phx$TRACTCE10 )
-
 #Data
 income.URL <- "https://raw.githubusercontent.com/lecy/neighborhood_change_phx/master/data/income.dashboard.dat.2.csv"
-
 income.dashboard <- read.csv( income.URL, stringsAsFactors=FALSE )
-
 phx2 <- geo_join( phx, income.dashboard, by_sp="geoid2", by_df="GISJOIN", how="left" )
-
 phx_fortified <- tidy( phx, region = "geoid2")
-
 income.fortified <- merge( phx_fortified, income.dashboard, by.x="id", by.y="GISJOIN", all.x=T)
  
 ```
@@ -587,12 +520,10 @@ Row {.tabset .tabset-fade}
 
 ```{r, include=FALSE}
 BelowPoverty_2010 <- dotsInPolys( phx2 , income.dashboard$BelowPoverty_2010/100, f = "random", offset, compatible = FALSE)
-
 OnetwentyfivekPlusincome_2010 <- dotsInPolys( phx2 , income.dashboard$OnetwentyfivekPlusincome_2010/100, f = "random", offset, compatible = FALSE)
 ```
 ```{r}
 par( mar=c(0,0,0,0) )
-
 plot( phx2, border="black",
       xlim=c(-112.5, -111.5), ylim=c(33.2, 33.75)  )
 points( BelowPoverty_2010, col=adjustcolor("forestgreen", alpha.f=0.2), pch=19, cex=0.7 )
@@ -604,14 +535,11 @@ legend( "bottomleft", legend= c("Below Poverty", "Highest Income Bracket"), fill
 
 ```{r, include=FALSE}
 # Income 2015 Maps
-
 BelowPoverty_2015 <- dotsInPolys( phx2 , income.dashboard$BelowPoverty_2015/100, f = "random", offset, compatible = FALSE)
-
 OnetwentyfivekPlusIncome_2015 <- dotsInPolys( phx2 , income.dashboard$OnetwentyfivekPlusIncome_2015/100, f = "random", offset, compatible = FALSE)
 ```
 ```{r}
 par( mar=c(0,0,0,0) )
-
 plot( phx2, border="black", 
       xlim=c(-112.5, -111.5), ylim=c(33.2, 33.75)  )
 points( BelowPoverty_2015, col=adjustcolor("forestgreen", alpha.f=0.2), pch=19, cex=0.7 )
@@ -638,7 +566,6 @@ belowpoverty_2010
 
 ### Percent in Poverty 2015
 ```{r, include=FALSE}
-
 belowpoverty_2015 <- ggplot( data = income.fortified, 
                aes( x = long, y = lat, 
                     group = group, fill= BelowPovertyPercent_2015)) + geom_polygon() +
@@ -655,21 +582,52 @@ belowpoverty_2015
 ### Percent in Poverty 2015 Total
 ```{r}
 #Data
-
 pct <- c(16.9, 18.16, 65.55)
-
 shades <- c("darkolivegreen1", "forestgreen", "darkolivegreen3", "black")
-
 categories <- c("16.9%", "18.16%", "65.55%")
-
 # Donut
 pie(pct, labels = categories, col = shades)
-
 symbols(0, 0, circles = 1, add=TRUE, bg="white")
-
 legend("center", c("Below Poverty Level", "Highest Income", "All Others" ), fill=c("darkolivegreen1", "forestgreen","darkolivegreen3"), box.lty=0, bg=NULL)
 ```
 
+### MHHI 2010 Cartogram
+```{r, results='hide'}
+github.url <- "https://raw.githubusercontent.com/DS4PS/cpp-529-master/master/data/phx_dorling.geojson"
+phx <- geojson_read( x=github.url,  what="sp" )
+
+
+
+race.pop.2010.mod <- read.csv("/home/anthony/Documents/Capstone/Solo Project/Written CSVs/race_2010_pop.csv")
+
+# county_shp <- "/home/anthony/Documents/Capstone/Solo Project/Shape Files/tl_2010_04013_tract10.shp"
+
+# Read shape file and create and create variable for it
+# county_st <- st_read(county_shp)
+
+# Join shapefile with race by tract
+# mcpa <- left_join(county_st, race.pop.2010.mod, by=c("TRACTCE10"="tract"))
+
+combined <- tracts( state="AZ", county="Maricopa", cb=TRUE, year=2015 )
+combined <- merge( phx, race.pop.2010.mod, by.x="TRACTCE", by.y="tract" )
+
+phx_dorling <- spTransform( combined, CRS("+init=epsg:3395") )
+
+bb <- st_bbox( c( xmin = -12519146, xmax = -12421368, 
+                  ymax = 3965924, ymin = 3899074 ), 
+               crs = st_crs("+init=epsg:3395"))
+
+tm_shape( phx_dorling, bbox=bb ) + 
+  tm_polygons( col="MHHI", n=10, style="quantile", palette="Spectral" ) +
+  tm_layout( "Dorling Cartogram", title.position=c("right","top") )
+
+tmap_mode("plot")
+tm_basemap( "Stamen.Watercolor" ) +
+  tm_shape( phx_dorling, bbox=bb ) + 
+  tm_polygons( col="MHHI", n=7, style="quantile", palette="-inferno" ) 
+
+
+```
 
 Dataset {data-orientation=rows}
 =====================================     
@@ -681,9 +639,7 @@ This data table is a sample of the full dataset, including only those variables 
 ```{r, chunk-14, include=FALSE}
 dat.url <- "https://raw.githubusercontent.com/lecy/neighborhood_change_phx/master/data/tidy.dashboard.dat.csv"
 table.dat <- read.csv( dat.url, stringsAsFactors=F )
-
 table.dat <- table.dat[1:1600,]
-
 dat.selected.table <- datatable( table.dat,
            filter='top', rownames=FALSE, 
            #options=list( pageLength=50, autoWidth=TRUE ),
@@ -695,9 +651,7 @@ dat.selected.table <- datatable( table.dat,
 ```
 
 ```{r}
-
 dat.selected.table
-
 ```
 
 Variable Crosswalk {data-orientation=rows}
@@ -709,12 +663,8 @@ Variable Crosswalk {data-orientation=rows}
 This data table includes the names of the different variables from 1990-2015. Notes that 1990, 2000, and 2010 are the variable names from the NHGIS time series data tables downloaded at https://www.nhgis.org/. The 2015 variable names are those used to download data from the ACS 5 using the censusapi() package (more info: https://github.com/hrecht/censusapi).
 
 ```{r, chunk-15, include=FALSE}
-
 url2 <- "https://raw.githubusercontent.com/lecy/neighborhood_change_phx/master/data/phx.variable.name.crosswalk.2.csv"
-
 phx.var.crosswalk <- read.csv( url2, stringsAsFactors = F)
-
-
 phx.var.datatable <- datatable( phx.var.crosswalk,
            filter='top', rownames=FALSE, 
            #options=list( pageLength=50, autoWidth=TRUE ),
@@ -723,7 +673,6 @@ phx.var.datatable <- datatable( phx.var.crosswalk,
            class='table-condensed table-striped',
            options=list( dom='Bfrtip') ) %>%
   formatStyle( "construct", "white-space"="nowrap" )
-
 ```
 
 ```{r}
@@ -731,4 +680,89 @@ phx.var.datatable
 ```
 
 
+Population Cartograms {data-orientation=rows}
+=====================================    
+
+### Population Cartograms
+
+
+
+
+```{r, results='hide'}
+
+# github.url <- "https://raw.githubusercontent.com/DS4PS/cpp-529-master/master/data/phx_dorling.geojson"
+# phx <- geojson_read( x=github.url,  what="sp" )
+# 
+# 
+# 
+# race.pop.2010.mod <- read.csv("/home/anthony/Documents/Capstone/Solo Project/Written CSVs/race_2010_pop.csv")
+# 
+# # county_shp <- "/home/anthony/Documents/Capstone/Solo Project/Shape Files/tl_2010_04013_tract10.shp"
+# 
+# # Read shape file and create and create variable for it
+# # county_st <- st_read(county_shp)
+# 
+# # Join shapefile with race by tract
+# # mcpa <- left_join(county_st, race.pop.2010.mod, by=c("TRACTCE10"="tract"))
+# 
+# combined <- tracts( state="AZ", county="Maricopa", cb=TRUE, year=2015 )
+# combined <- merge( phx, race.pop.2010.mod, by.x="TRACTCE", by.y="tract" )
+# 
+# phx_dorling <- spTransform( combined, CRS("+init=epsg:3395") )
+# 
+# bb <- st_bbox( c( xmin = -12519146, xmax = -12421368, 
+#                   ymax = 3965924, ymin = 3899074 ), 
+#                crs = st_crs("+init=epsg:3395"))
+# 
+# tm_shape( phx_dorling, bbox=bb ) + 
+#   tm_polygons( col="MHHI", n=10, style="quantile", palette="Spectral" ) +
+#   tm_layout( "Dorling Cartogram", title.position=c("right","top") )
+# 
+# tmap_mode("plot")
+# tm_basemap( "Stamen.Watercolor" ) +
+#   tm_shape( phx_dorling, bbox=bb ) + 
+#   tm_polygons( col="MHHI", n=7, style="quantile", palette="-inferno" ) 
+
+phx2_dorling <- spTransform( combined, CRS("+init=epsg:3395") )
+
+bb <- st_bbox( c( xmin = -12519146, xmax = -12421368, 
+                  ymax = 3965924, ymin = 3899074 ), 
+               crs = st_crs("+init=epsg:3395"))
+
+tm_shape( phx_dorling, bbox=bb ) + 
+  tm_polygons( col="POP", n=10, style="quantile", palette="Spectral" ) +
+  tm_layout( "Dorling Cartogram", title.position=c("right","top") )
+
+tmap_mode("plot")
+tm_basemap( "Stamen.Watercolor" ) +
+  tm_shape( phx_dorling, bbox=bb ) + 
+  tm_polygons( col="POP", n=7, style="quantile", palette="-inferno" ) 
+
+
+
+
+
+```
+
+Unemployed Cartograms {data-orientation=rows}
+=====================================    
+
+### Unemployed Cartograms
+
+```{r, results='hide'}
+phx3_dorling <- spTransform( combined, CRS("+init=epsg:3395") )
+
+bb <- st_bbox( c( xmin = -12519146, xmax = -12421368, 
+                  ymax = 3965924, ymin = 3899074 ), 
+               crs = st_crs("+init=epsg:3395"))
+
+tm_shape( phx_dorling, bbox=bb ) + 
+  tm_polygons( col="punemp12", n=10, style="quantile", palette="Spectral" ) +
+  tm_layout( "Dorling Cartogram", title.position=c("right","top") )
+
+tmap_mode("plot")
+tm_basemap( "Stamen.Watercolor" ) +
+  tm_shape( phx_dorling, bbox=bb ) + 
+  tm_polygons( col="punemp12", n=7, style="quantile", palette="-inferno" ) 
+```
 
