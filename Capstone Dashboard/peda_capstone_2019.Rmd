@@ -600,8 +600,9 @@ github.url <- "https://raw.githubusercontent.com/DS4PS/cpp-529-master/master/dat
 phx <- geojson_read( x=github.url,  what="sp" )
 
 
+race.pop.2010.mod <- read.csv("https://raw.githubusercontent.com/Treetopflier/neighborhood_change_phx/master/Written%20CSVs/race_2010_pop.csv")
 
-race.pop.2010.mod <- read.csv("/home/anthony/Documents/Capstone/Solo Project/Written CSVs/race_2010_pop.csv")
+# race.pop.2010.mod <- read.csv("/home/anthony/Documents/Capstone/Solo Project/Written CSVs/race_2010_pop.csv")
 
 # county_shp <- "/home/anthony/Documents/Capstone/Solo Project/Shape Files/tl_2010_04013_tract10.shp"
 
