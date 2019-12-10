@@ -483,14 +483,6 @@ symbols(0, 0, circles = 1, add=TRUE, bg="white")
 legend("center", c("Houses for Sale", "Houses Not for Sale"), fill=c("firebrick4", "goldenrod2"), box.lty=0, bg=NULL)
 ```
 
-### % Houses for Sale 2000 and 2010
-
-```{r, figure.align="center", figure.height = 10, figure.width=10}
-hist(vacancy.dashboard$VacantForSale_2000,col=rgb(250,128,114, alpha=100, maxColorValue = 250), 
-xlab="Houses for Sale",main="Histograms for\n Houses for Sale in 2000 and 2010", breaks=50)
-hist(vacancy.dashboard$VacantForSale_2010, col=rgb(255,127,80, alpha=50, maxColorValue = 255), add=TRUE, breaks=50)
-legend( "right", legend= c("Houses 2000", "Houses 2010"), fill=c("lightsalmon", rgb(255,127,80, alpha=50, maxColorValue = 255)),  box.lty=2, box.col="black")
-```
 
 Income {data-orientation=rows}
 =====================================     
