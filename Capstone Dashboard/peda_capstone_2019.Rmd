@@ -87,7 +87,7 @@ The 1990, 2000, and select 2010 data is pulled from NHGIS time-series tables ava
 
 
 
-This dashboard identifies five demographic changes to consider:
+This dashboard identifies six demographic changes to consider:
 
 * Total Phoenix Population from 1990-2015
 
